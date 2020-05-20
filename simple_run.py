@@ -10,6 +10,10 @@ from neural_differential.normalisation_parameters import load_data, normalize_in
 
 
 def run_model(input_data, output_data, model_chk, epochs):
+    print("#"*50)
+    print("input size :", input_data.shape)
+    print("output size :", output_data.shape)
+    print("#"*50)
     model = tf.keras.models.load_model(model_chk)
     history = model.fit(
         input_data,
