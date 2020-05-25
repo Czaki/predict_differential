@@ -17,7 +17,7 @@ def run_model(input_data, output_data, model_chk, epochs):
     model = tf.keras.models.load_model(model_chk)
     history = model.fit(
         input_data,
-        output_data[:, model.output_shape[1]],
+        output_data[:, :model.output_shape[1]],
         epochs=epochs,
         validation_split=0.2,
         verbose=0,
