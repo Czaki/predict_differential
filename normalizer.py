@@ -5,9 +5,18 @@ import numpy as np
 class Normalizer(ABC):
     @abstractmethod
     def normalize_input(self, data: np.ndarray) -> np.ndarray:
+        raise
+
+    @abstractmethod
+    def normalize_output(self, data: np.ndarray) -> np.ndarray:
         pass
 
-    def normalize_output(self, data: np.ndarray) -> np.ndarray:
+    @abstractmethod
+    def restore_output(self, data: np.ndarray) -> np.ndarray:
+        pass
+
+    @abstractmethod
+    def restore_input(self, data: np.ndarray) -> np.ndarray:
         pass
 
 
@@ -24,6 +33,12 @@ class UniformNormalizer(Normalizer):
     def normalize_output(self, data: np.ndarray):
         return (data - self.output_min) / np.subtract(self.output_max, self.output_min)
 
+    def restore_output(self, data: np.ndarray) -> np.ndarray:
+        return data * np.subtract(self.output_max, self.output_min) + self.output_min
+
+    def restore_input(self, data: np.ndarray) -> np.ndarray:
+        return data * np.subtract(self.input_max, self.input_min) + self.input_min
+
 
 class StdNormalizer(Normalizer):
     def __init__(self, input_df: np.ndarray, output_df: np.ndarray):
@@ -37,3 +52,9 @@ class StdNormalizer(Normalizer):
 
     def normalize_output(self, data: np.ndarray):
         return (data - self.output_mean) / self.output_std
+
+    def restore_output(self, data: np.ndarray) -> np.ndarray:
+        return data * self.output_std + self.output_mean
+
+    def restore_input(self, data: np.ndarray) -> np.ndarray:
+        return data * self.input_std + self.input_mean
