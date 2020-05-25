@@ -6,7 +6,7 @@ import pickle
 import numpy as np
 import tensorflow as tf
 
-
+from normalizer import Normalizer
 
 
 def run_model(input_data, output_data, model_chk, epochs):
@@ -38,11 +38,11 @@ def main():
     input_files = sorted(glob.glob(os.path.join(args.data_dir, "input*csv")))
     output_files = sorted(glob.glob(os.path.join(args.data_dir, "output*csv")))
     with open(args.norm_parameters, 'rb') as ff:
-        norm_param = pickle.load(ff)
+        norm_param: Normalizer = pickle.load(ff)
     inputs = np.concatenate([np.loadtxt(file_name, delimiter=",") for file_name in input_files])
     outputs = np.concatenate([np.loadtxt(file_name, delimiter=",") for file_name in output_files])
-    inputs = norm_param.normalize_input(norm_param, inputs)
-    outputs = norm_param.normalize_output(norm_param, outputs)
+    inputs = norm_param.normalize_input(inputs)
+    outputs = norm_param.normalize_output(outputs)
     run_model(inputs, outputs, args.model, args.epochs)
 
 
