@@ -92,11 +92,33 @@ class IncreaseNormalizer(Normalizer):
 
     def normalize_output(self, data: np.ndarray) -> np.ndarray:
         res = np.copy(data)
-        res[:, 1:] -= data[:, 1:]
+        res[:, 1:] -= data[:, :-1]
         return res
 
     def restore_output(self, data: np.ndarray) -> np.ndarray:
         return np.cumsum(data, axis=1)
+
+    def restore_input(self, data: np.ndarray) -> np.ndarray:
+        return data
+
+
+class IncreaseNormNormalizer(Normalizer):
+    def __init__(self, input_df: np.ndarray, output_df: np.ndarray):
+        self._normalizer = StdNormalizer(input_df, self._normalize_output(output_df))
+
+    def normalize_input(self, data: np.ndarray) -> np.ndarray:
+        return data
+
+    def _normalize_output(self, data: np.ndarray):
+        res = np.copy(data)
+        res[:, 1:] -= data[:, :-1]
+        return res
+
+    def normalize_output(self, data: np.ndarray) -> np.ndarray:
+        return self._normalizer.normalize_output(self._normalize_output(data))
+
+    def restore_output(self, data: np.ndarray) -> np.ndarray:
+        return self._normalizer.restore_output(np.cumsum(data, axis=1))
 
     def restore_input(self, data: np.ndarray) -> np.ndarray:
         return data
